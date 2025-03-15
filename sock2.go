@@ -1,36 +1,39 @@
 package main
 
 import (
-	"fmt"
-	"os/exec"
-	"log"
+    "fmt"
+    "os/exec"
+    "log"
 )
 
 func getSocketStatistics() (string, error) {
-	cmd := exec.Command("ss", "-s")
-	output, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	return string(output), nil
+    // Check if ss command is available
+    _, err := exec.LookPath("ss")
+    if err != nil {
+        return "", fmt.Errorf("ss command not found: %v", err)
+    }
+
+    cmd := exec.Command("ss", "-s")
+    output, err := cmd.Output()
+    if err != nil {
+        return "", fmt.Errorf("failed to execute ss command: %v", err)
+    }
+    return string(output), nil
 }
 
 func printSocketStatistics() error {
-	socketStats, err := getSocketStatistics()
-	if err != nil {
-		return err
-	}
+    socketStats, err := getSocketStatistics()
+    if err != nil {
+        return err // Error will be logged in main
+    }
 
-	// Print statistics
-	fmt.Println("Socket Statistics:")
-	fmt.Println(socketStats)
-	return nil
+    fmt.Println("Socket Statistics:")
+    fmt.Println(socketStats)
+    return nil
 }
 
 func main() {
-	err := printSocketStatistics()
-	if err != nil {
-		log.Printf("Error: %v\n", err)
-	}
+    if err := printSocketStatistics(); err != nil {
+        log.Printf("Failed to get socket statistics: %v\n", err)
+    }
 }
-
