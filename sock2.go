@@ -37,7 +37,7 @@ func getSocketStatistics(runner CommandRunner, timeout time.Duration) (string, e
 	defer cancel()
 
 	// Execute command with context
-	output, err := runner.CombinedOutput("ss", "-s")
+	output, err := runner.CombinedOutput("ss", "-tanl")
 	if ctx.Err() == context.DeadlineExceeded {
 		return "", fmt.Errorf("ss command timed out after %v", timeout)
 	}
